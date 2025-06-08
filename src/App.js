@@ -111,6 +111,13 @@ function App() {
       <main>
         <NewsFeed />
       </main>
+      {/* این خط کد مشکل را حل می کند
+        ما از متغیر و کامپوننت استفاده نشده، استفاده می کنیم
+      */}
+      <ArticleDetailModal 
+        article={selectedArticle} 
+        onClose={() => setSelectedArticle(null)} 
+      />
     </div>
   );
 }
