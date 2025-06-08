@@ -1,40 +1,36 @@
-// This function fetches real news from NewsAPI.org
-const fetch = require('node-fetch');
-
+// This function now provides trending topics related to Iran
 exports.handler = async () => {
-  // Read the secret API key from Netlify's environment variables
-  const { NEWS_API_KEY } = process.env;
-  if (!NEWS_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'News API key is not configured.' }) };
-  }
-
-  // We will fetch top headlines about technology from reputable sources
-  const apiUrl = `https://newsapi.org/v2/top-headlines?category=technology&language=en&pageSize=6`;
+  // For now, we simulate finding trending topics.
+  // In the future, this could fetch data from Google Trends or other sources.
+  const trendingTopics = [
+    {
+      "id": "iran-stock-market-1",
+      "topic": "آخرین تحولات بازار بورس و فرابورس ایران",
+      "category": "اقتصادی"
+    },
+    {
+      "id": "iran-tech-startup-2",
+      "topic": "رونمایی از جدیدترین دستاوردهای استارتاپ‌های دانش‌بنیان",
+      "category": "فناوری"
+    },
+    {
+      "id": "iran-national-football-3",
+      "topic": "عملکرد تیم ملی فوتبال ایران در رقابت‌های مقدماتی",
+      "category": "ورزشی"
+    },
+    {
+        "id": "iran-environment-water-4",
+        "topic": "چالش‌های مدیریت منابع آبی در فلات مرکزی ایران",
+        "category": "محیط زیست"
+    }
+  ];
 
   try {
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'X-Api-Key': NEWS_API_KEY,
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('NewsAPI Error:', errorData);
-      return { statusCode: response.status, body: JSON.stringify({ error: 'Failed to get response from NewsAPI.' }) };
-    }
-
-    const data = await response.json();
-    
-    // Return the articles to our React app
     return {
       statusCode: 200,
-      body: JSON.stringify(data.articles),
+      body: JSON.stringify(trendingTopics),
     };
-
   } catch (error) {
-    console.error('Function Error:', error);
     return { statusCode: 500, body: JSON.stringify({ error: 'Internal server error.' }) };
   }
 };
