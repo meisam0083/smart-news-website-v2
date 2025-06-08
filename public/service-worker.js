@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-globals */
+
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
@@ -28,19 +29,17 @@ registerRoute(
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 );
 
-// Cache images with a Stale-While-Revalidate strategy
+// Cache the news.json file with a Stale-While-Revalidate strategy.
 registerRoute(
-  ({ url }) => url.origin === self.location.origin && /\.(?:png|jpg|jpeg|svg|gif)$/.test(url.pathname),
+  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('news.json'),
   new StaleWhileRevalidate({
-    cacheName: 'images',
+    cacheName: 'api-cache',
     plugins: [
-      new ExpirationPlugin({ maxEntries: 50 }),
+      new ExpirationPlugin({ maxEntries: 10 }),
     ],
   })
 );
 
-// This allows the web app to trigger skipWaiting via
-// registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
