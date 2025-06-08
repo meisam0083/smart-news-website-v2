@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { marked } from 'marked';
 import './index.css'; // فایل استایل را وارد می کنیم
 
-// تابع کمکی برای فرمت زیبای تاریخ به فارسی
-const formatTimestamp = (timestamp) => {
-  const date = new Date(timestamp);
-  return date.toLocaleString('fa-IR', {
-    year: 'numeric', month: 'long', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
-};
+// کامپوننت SVG برای آیکون ها جهت زیبایی بیشتر
+const NewsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z" />
+    <path d="M16 2v20" /><path d="M11 12h-1" /><path d="M11 8h-1" /><path d="M11 16h-1" />
+  </svg>
+);
 
-// داده های نمونه که حالا فرض می کنیم از قبل خلاصه شده اند
+
+// داده های نمونه که حالا فرض می کنیم از قبل توسط AI خلاصه شده اند
 const preSummarizedNews = [
   {
     id: '1',
@@ -27,7 +26,7 @@ const preSummarizedNews = [
     title: 'آینده هوش مصنوعی: فراتر از تصور',
     imageUrl: 'https://placehold.co/600x400/4f46e5/ffffff?text=AI',
     summary: 'مدل‌های جدید هوش مصنوعی با قابلیت‌های استدلال و خلاقیت پیشرفته، در حال ایجاد تحول در صنایع خلاق، پزشکی و علوم پایه هستند.',
-    content: `هوش مصنوعی دیگر تنها یک ابزار برای اتوماسیون وظایف نیست، بلکه به یک همکار خلاق تبدیل شده است. مدل‌های زبانی بزرگ (LLMs) اکنون می‌توانند در نوشتن کد، تولید محتوای هنری و حتی کمک به تحقیقات علمی پیچیده نقش ایفا کنند. این پیشرفت‌ها، مرزهای بین توانایی‌های انسان و ماشین را کمرنگ‌تر از همیشه کرده‌اند.`,
+    content: `هوش مصنوعی دیگر تنها یک ابزار برای اتوماسیون وظایf نیست، بلکه به یک همکار خلاق تبدیل شده است. مدل‌های زبانی بزرگ (LLMs) اکنون می‌توانند در نوشتن کد، تولید محتوای هنری و حتی کمک به تحقیقات علمی پیچیده نقش ایفا کنند. این پیشرفت‌ها، مرزهای بین توانایی‌های انسان و ماشین را کمرنگ‌تر از همیشه کرده‌اند.`,
     timestamp: new Date().setHours(11, 0, 0, 0),
     category: 'فناوری'
   },
@@ -48,12 +47,14 @@ function App() {
 
   // کامپوننت هدر
   const Header = () => (
-    <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-10">
-      <div className="container mx-auto flex justify-between items-center p-4 sm:p-5">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">اخبار هوشمند</h1>
-        <a href="#about" className="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg text-sm sm:text-base hover:bg-blue-700 transition-colors">
-          درباره ما
-        </a>
+    <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-20">
+      <div className="container mx-auto flex justify-between items-center p-4">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-600 text-white p-2 rounded-full">
+            <NewsIcon />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">اخبار هوشمند</h1>
+        </div>
       </div>
     </header>
   );
@@ -61,23 +62,26 @@ function App() {
   // کامپوننت کارت خبر
   const ArticleCard = ({ article }) => (
     <div 
-      className="bg-white rounded-2xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer flex flex-col"
+      className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 cursor-pointer flex flex-col group"
       onClick={() => setSelectedArticle(article)}
     >
-      <img src={article.imageUrl} alt={article.title} className="w-full h-52 object-cover" />
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="overflow-hidden">
+        <img src={article.imageUrl} alt={article.title} className="w-full h-56 object-cover transform transition-transform duration-500 group-hover:scale-110" />
+      </div>
+      <div className="p-6 flex flex-col flex-grow">
         <span className="text-sm font-bold text-blue-600 mb-2">{article.category}</span>
-        <h3 className="text-xl font-bold text-gray-900 flex-grow">{article.title}</h3>
-        <p className="text-gray-600 text-base mt-3 leading-relaxed">{article.summary}</p>
+        <h3 className="text-xl font-bold text-gray-900 flex-grow group-hover:text-blue-700 transition-colors">{article.title}</h3>
+        <p className="text-gray-600 text-base mt-4 leading-relaxed">{article.summary}</p>
       </div>
     </div>
   );
 
   // کامپوننت فید اخبار
   const NewsFeed = () => (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8">
-       <h2 className="text-3xl font-extrabold text-gray-900 mb-8 text-center">آخرین اخبار و تحلیل‌ها</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-4 py-8 sm:py-12">
+       <h2 className="text-4xl font-extrabold text-gray-900 mb-4 text-center">آخرین تحلیل‌ها</h2>
+       <p className="text-lg text-gray-500 mb-12 text-center">منتخبی از مهم‌ترین اخبار روز که توسط هوش مصنوعی خلاصه شده‌اند</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {preSummarizedNews.map(article => <ArticleCard key={article.id} article={article} />)}
       </div>
     </div>
@@ -87,18 +91,29 @@ function App() {
   const ArticleDetailModal = ({ article, onClose }) => {
     if (!article) return null;
 
+    // تابع کمکی برای فرمت تاریخ در مودال
+    const formatModalTimestamp = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 animate-fade-in" onClick={onClose}>
-        <div className="bg-gray-50 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in" onClick={onClose}>
+        <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
           <div className="p-6 sm:p-8 overflow-y-auto">
-            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold mb-4 px-3 py-1 rounded-full">{article.category}</span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{article.title}</h2>
-            <p className="text-sm text-gray-500 mb-6">{formatTimestamp(article.timestamp)}</p>
-            <img src={article.imageUrl} alt={article.title} className="w-full h-64 object-cover rounded-xl mb-6" />
-            <div className="prose max-w-none text-gray-700 text-lg leading-loose" dangerouslySetInnerHTML={{ __html: marked(article.content.replace(/\n/g, '<br/>')) }} />
+            <div className="mb-6">
+                <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1 rounded-full">{article.category}</span>
+                <p className="text-sm text-gray-500 mt-3">{formatModalTimestamp(article.timestamp)}</p>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 leading-tight">{article.title}</h2>
+            <div className="text-gray-700 text-lg leading-loose space-y-4">
+                {article.content.split('\n\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                ))}
+            </div>
           </div>
-          <div className="flex justify-end p-4 bg-white border-t border-gray-200 rounded-b-2xl">
-            <button onClick={onClose} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">بستن</button>
+          <div className="flex justify-end p-4 bg-gray-100 border-t border-gray-200 rounded-b-2xl">
+            <button onClick={onClose} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">بستن</button>
           </div>
         </div>
       </div>
@@ -106,14 +121,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <main>
         <NewsFeed />
       </main>
-      {/* این خط کد مشکل را حل می کند
-        ما از متغیر و کامپوننت استفاده نشده، استفاده می کنیم
-      */}
       <ArticleDetailModal 
         article={selectedArticle} 
         onClose={() => setSelectedArticle(null)} 
