@@ -2,27 +2,15 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- این خط رنگ استاتوس بار را آبی می کند -->
     <meta name="theme-color" content="#2563EB" />
     <meta
       name="description"
       content="وب‌سایت خبری هوشمند با قابلیت‌های مدرن"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    
-    <!-- ایمپورت فونت وزیرمتن -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- این خط جادوییه! تمام استایل ها رو فعال می کنه -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script>
-      // تنظیمات دلخواه برای Tailwind
       tailwind.config = {
         theme: {
           extend: {
@@ -33,25 +21,16 @@
         }
       }
     </script>
-    
-    <!-- استایل های سفارشی برای انیمیشن -->
     <style>
       @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       .animate-fade-in-up {
         animation: fadeInUp 0.5s ease-out forwards;
-        opacity: 0; /* Start hidden */
+        opacity: 0;
       }
     </style>
-    
     <title>اخبار هوشمند</title>
   </head>
   <body>
