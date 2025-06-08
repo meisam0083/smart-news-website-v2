@@ -11,14 +11,16 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-// داده های نمونه اخبار
-const mockNews = [
+// داده های نمونه که حالا فرض می کنیم از قبل خلاصه شده اند
+const preSummarizedNews = [
   {
     id: '1',
     title: 'تغییرات اقلیمی و آینده سیاره زمین',
     imageUrl: 'https://placehold.co/600x400/15803d/ffffff?text=Climate',
-    summary: 'مقاله ای جامع در مورد آخرین تحولات تغییرات اقلیمی، اثرات آن بر محیط زیست و راهکارهای جهانی برای مقابله با آن.',
-    content: `**تغییرات اقلیمی: یک بحران جهانی**\n\nتغییرات اقلیمی یکی از بزرگترین چالش‌های پیش روی بشریت در قرن 21 است. افزایش دمای جهانی، ذوب شدن یخچال‌های طبیعی، و بالا آمدن سطح دریاها از جمله پیامدهای این پدیده هستند.`,
+    // این خلاصه کوتاه برای نمایش در کارت خبر است
+    summary: 'تحلیلگران بر این باورند که افزایش دمای جهانی و ذوب شدن یخچال‌های طبیعی، چالش‌های بزرگی برای بشریت در قرن ۲۱ ایجاد کرده است.',
+    // این متن کامل‌تر (که توسط AI تولید شده) در مودال نمایش داده می‌شود
+    content: `بر اساس آخرین گزارش‌ها، تغییرات اقلیمی به عنوان یک بحران جهانی شناخته می‌شود که پیامدهایی چون افزایش سطح دریاها و وقوع پدیده‌های آب و هوایی شدید را به همراه دارد. فعالیت‌های انسانی، به ویژه سوزاندن سوخت‌های فسیلی، عامل اصلی این تغییرات معرفی شده‌اند. راهکارهای جهانی برای مقابله با این پدیده بر گذار به انرژی‌های تجدیدپذیر و همکاری‌های بین‌المللی متمرکز است.`,
     timestamp: new Date().setHours(10, 30, 0, 0),
     category: 'محیط زیست'
   },
@@ -26,8 +28,8 @@ const mockNews = [
     id: '2',
     title: 'پیشرفت‌های اخیر در هوش مصنوعی',
     imageUrl: 'https://placehold.co/600x400/16a34a/ffffff?text=AI',
-    summary: 'مروری بر تازه‌ترین دستاوردهای هوش مصنوعی در زمینه‌های مختلف از جمله پردازش زبان طبیعی و بینایی کامپیوتر.',
-    content: `**انقلاب هوش مصنوعی در راه است**\n\nهوش مصنوعی (AI) به سرعت در حال پیشرفت است و مرزهای آنچه را که ماشین‌ها می‌توانند انجام دهند، جابجا می‌کند. از پردازش زبان طبیعی (NLP) گرفته تا رباتیک پیشرفته، کاربردهای AI در حال تغییر زندگی روزمره و صنایع مختلف هستند.`,
+    summary: 'هوش مصنوعی با پیشرفت‌های چشمگیر در پردازش زبان طبیعی و رباتیک، در حال دگرگون کردن صنایع مختلف و زندگی روزمره است.',
+    content: `انقلاب هوش مصنوعی با سرعتی بالا در حال پیشرفت است و کاربردهای آن از پزشکی و تشخیص بیماری‌ها تا حمل‌ونقل خودران و امور مالی گسترش یافته است. با وجود پتانسیل عظیم برای حل مشکلات پیچیده، چالش‌های اخلاقی و تاثیر بر بازار کار نیز از دغدغه‌های اصلی این حوزه به شمار می‌رود. توسعه مسئولانه AI کلید بهره‌برداری از فرصت‌های آینده خواهد بود.`,
     timestamp: new Date().setHours(11, 0, 0, 0),
     category: 'فناوری'
   },
@@ -36,48 +38,13 @@ const mockNews = [
 // کامپوننت اصلی اپلیکیشن
 function App() {
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [summarizedContent, setSummarizedContent] = useState({});
-  const [loadingSummary, setLoadingSummary] = useState(false);
-  const [summaryError, setSummaryError] = useState('');
-
-  // تابع فراخوانی هوش مصنوعی برای خلاصه سازی
-  const summarizeArticle = async (articleId, content) => {
-    setLoadingSummary(true);
-    setSummaryError('');
-    try {
-      const prompt = `متن خبری زیر را به زبان فارسی و در حداکثر 3 جمله کلیدی و مهم خلاصه کن. فقط متن خلاصه را برگردان:\n\n${content}`;
-      const apiUrl = '/.netlify/functions/gemini-proxy';
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'ارتباط با سرور هوش مصنوعی ناموفق بود');
-      }
-
-      const result = await response.json();
-      if (result.response) {
-        setSummarizedContent(prev => ({ ...prev, [articleId]: result.response }));
-      } else {
-        throw new Error('پاسخ معتبری از هوش مصنوعی دریافت نشد.');
-      }
-    } catch (error) {
-      setSummaryError(error.message);
-    } finally {
-      setLoadingSummary(false);
-    }
-  };
 
   // کامپوننت هدر
   const Header = () => (
     <header className="bg-green-700 text-white p-4 shadow-lg sticky top-0 z-10">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold">اخبار هوشمند</h1>
-        <nav><a href="#about" className="hover:text-green-200">درباره ما</a></nav>
+      <div className="container mx-auto flex justify-between items-center px-4">
+        <h1 className="text-xl sm:text-2xl font-bold">اخبار هوشمند</h1>
+        <nav><a href="#about" className="text-sm sm:text-base hover:text-green-200">درباره ما</a></nav>
       </div>
     </header>
   );
@@ -85,22 +52,22 @@ function App() {
   // کامپوننت کارت خبر
   const ArticleCard = ({ article }) => (
     <div 
-      className="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform hover:scale-105 duration-300 cursor-pointer flex flex-col"
+      className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer flex flex-col"
       onClick={() => setSelectedArticle(article)}
     >
       <img src={article.imageUrl} alt={article.title} className="w-full h-48 object-cover" />
-      <div className="p-4 flex flex-col flex-grow">
-        <span className="text-sm font-semibold text-green-600">{article.category}</span>
-        <h3 className="font-bold text-xl my-2 text-gray-800 flex-grow">{article.title}</h3>
-        <p className="text-gray-600 text-sm">{article.summary}</p>
+      <div className="p-5 flex flex-col flex-grow">
+        <span className="text-sm font-semibold text-green-600 mb-2">{article.category}</span>
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 flex-grow">{article.title}</h3>
+        <p className="text-gray-700 text-sm mt-2 leading-relaxed">{article.summary}</p>
       </div>
     </div>
   );
 
   // کامپوننت فید اخبار
   const NewsFeed = ({ news }) => (
-    <div className="p-4 md:p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto p-4 sm:p-6 md:p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {news.map(article => <ArticleCard key={article.id} article={article} />)}
       </div>
     </div>
@@ -109,26 +76,18 @@ function App() {
   // کامپوننت مودال جزئیات خبر
   const ArticleDetailModal = ({ article, onClose }) => {
     if (!article) return null;
-    const displayedContent = summarizedContent[article.id] || article.content;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50" onClick={onClose}>
-        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-          <div className="p-6 overflow-y-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{article.title}</h2>
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50" onClick={onClose}>
+        <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <div className="p-5 sm:p-7 overflow-y-auto">
+            <img src={article.imageUrl} alt={article.title} className="w-full h-56 sm:h-72 object-cover rounded-xl mb-5" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{article.title}</h2>
             <p className="text-sm text-gray-500 mb-4">{formatTimestamp(article.timestamp)}</p>
-            <img src={article.imageUrl} alt={article.title} className="w-full h-64 object-cover rounded-md mb-4" />
-            <div className="prose max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: marked(displayedContent.replace(/\n/g, '<br/>')) }} />
+            <div className="prose max-w-none text-gray-800 leading-loose" dangerouslySetInnerHTML={{ __html: marked(article.content.replace(/\n/g, '<br/>')) }} />
           </div>
-          <div className="flex justify-end items-center gap-3 p-4 bg-gray-50 border-t border-gray-200">
-            {loadingSummary && <p className="text-gray-600 animate-pulse">در حال خلاصه‌سازی...</p>}
-            {summaryError && <p className="text-red-500 text-sm">{summaryError}</p>}
-            {!loadingSummary && !summaryError && !summarizedContent[article.id] && (
-              <button onClick={() => summarizeArticle(article.id, article.content)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                خلاصه‌سازی با AI
-              </button>
-            )}
-            <button onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors">بستن</button>
+          <div className="flex justify-end p-4 bg-gray-50 border-t border-gray-200 rounded-b-2xl">
+            <button onClick={onClose} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-5 rounded-lg transition-colors">بستن</button>
           </div>
         </div>
       </div>
@@ -136,10 +95,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <main>
-        <NewsFeed news={mockNews} />
+        {/* حالا از داده های از قبل خلاصه شده استفاده می کنیم */}
+        <NewsFeed news={preSummarizedNews} />
       </main>
       <ArticleDetailModal article={selectedArticle} onClose={() => setSelectedArticle(null)} />
     </div>
