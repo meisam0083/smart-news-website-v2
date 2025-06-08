@@ -1,4 +1,4 @@
-import React from 'react'; // <<-- فقط این خط تغییر کرده است
+import React from 'react';
 
 // داده های نمونه که از قبل توسط AI خلاصه شده اند
 const preSummarizedNews = [
@@ -31,33 +31,43 @@ function App() {
   // کامپوننت هدر
   const Header = () => (
     <header className="bg-white/95">
-      <div className="container mx-auto max-w-3xl px-6 py-8">
-        <h1 className="text-4xl font-extrabold text-gray-900">داشبورد اخبار هوشمند</h1>
+      <div className="container mx-auto max-w-3xl px-6 py-8 text-center">
+        <h1 className="text-4xl font-extrabold text-blue-600">اخبار هوشمند</h1>
         <p className="mt-2 text-lg text-gray-500">کاوش در مهم‌ترین اخبار و تحلیل‌های روز</p>
       </div>
     </header>
   );
 
   // کامپوننت کارت خبر
-  const ArticleCard = ({ article }) => {
+  const ArticleCard = ({ article, index }) => {
+    
+    // تابع کمکی برای تبدیل اعداد انگلیسی به فارسی
+    const toPersianDigits = (num) => {
+        const persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
+        return num.toString().replace(/[0-9]/g, (w) => persian[w]);
+    };
+
     // تابع کمکی برای نمایش تاریخ به صورت "۳ ساعت پیش" و غیره
     const timeAgo = (timestamp) => {
         const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
         let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " سال پیش";
+        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " سال پیش";
         interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " ماه پیش";
+        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " ماه پیش";
         interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " روز پیش";
+        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " روز پیش";
         interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + " ساعت پیش";
+        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " ساعت پیش";
         interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + " دقیقه پیش";
+        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " دقیقه پیش";
         return "لحظاتی پیش";
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-500">
+        <div 
+          className="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-500 animate-fade-in-up"
+          style={{ animationDelay: `${index * 100}ms` }}
+        >
             <div className="flex justify-between items-center mb-4">
                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{article.category}</span>
                  <span className="text-xs text-gray-400 font-medium">{timeAgo(article.timestamp)}</span>
@@ -72,7 +82,7 @@ function App() {
   const NewsFeed = () => (
     <div className="container mx-auto max-w-3xl px-6 py-8">
       <div className="space-y-6">
-        {preSummarizedNews.map(article => <ArticleCard key={article.id} article={article} />)}
+        {preSummarizedNews.map((article, index) => <ArticleCard key={article.id} article={article} index={index} />)}
       </div>
     </div>
   );
