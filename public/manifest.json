@@ -3,14 +3,13 @@
   "name": "اخبار هوشمند ایران",
   "icons": [
     {
-      "src": "https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f4f0/u1f4f0_u1f5de.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIiB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxMiI+PGNpcmNsZSBjeD0iOTYiIGN5PSI5NiIgcj0iNzYiLz48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIGQ9Im04MCA0NiA0MCAxMDAiLz48cGF0aCBkPSJtNjAgNjZoNzIiLz48cGF0aCBkPSJtNjAgMTI2aDcyIi8+PC9nPjwvc3ZnPg==",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
     },
     {
-      "src": "https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f4f0/u1f4f0_u1f5de.png",
-      "type": "image/png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxOCI+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIyMjYiLz48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIGQ9Im0yMDQgMTQybDEzMiAyMjgiLz48cGF0aCBkPSJtMTY4IDE4MGgyMDQiLz48cGF0aCBkPSJtMTY4IDMzMmgyMDQiLz48L2c+PC9zdmc+",
+      "type": "image/svg+xml",
       "sizes": "512x512"
     }
   ],
