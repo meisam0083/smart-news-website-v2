@@ -32,8 +32,8 @@ function App() {
   const Header = () => (
     <header className="bg-white/95">
       <div className="container mx-auto max-w-3xl px-6 py-8 text-center">
-        <h1 className="text-4xl font-extrabold text-blue-600">اخبار هوشمند</h1>
-        <p className="mt-2 text-lg text-gray-500">کاوش در مهم‌ترین اخبار و تحلیل‌های روز</p>
+        <h1 className="text-4xl font-extrabold text-blue-600 mb-4">اخبار هوشمند</h1>
+        <p className="text-base font-semibold text-gray-500">کاوش در مهم‌ترین اخبار و تحلیل‌های روز</p>
       </div>
     </header>
   );
@@ -72,8 +72,8 @@ function App() {
                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{article.category}</span>
                  <span className="text-xs text-gray-400 font-medium">{timeAgo(article.timestamp)}</span>
             </div>
-            <h3 className="text-lg font-bold text-gray-800 leading-snug">{article.title}</h3>
-            <p className="text-gray-500 text-base mt-2 leading-relaxed">{article.summary}</p>
+            <h3 className="text-lg font-bold text-gray-800 leading-tight">{article.title}</h3>
+            <p className="text-sm text-gray-600 mt-2 leading-relaxed">{article.summary}</p>
         </div>
     );
   };
