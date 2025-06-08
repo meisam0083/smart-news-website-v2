@@ -2,15 +2,16 @@ const fetch = require('node-fetch');
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-
-if (!global._firebaseApp) {
-  global._firebaseApp = initializeApp({
-    credential: cert(serviceAccount)
-  });
+// تابع برای اتصال امن به فایربیس
+function getDb() {
+    if (!global._firebaseApp) {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        global._firebaseApp = initializeApp({
+            credential: cert(serviceAccount)
+        });
+    }
+    return getFirestore();
 }
-
-const db = getFirestore();
 
 const topics = [
     { topic: "آخرین تحولات بازار بورس و فرابورس ایران", category: "اقتصادی" },
@@ -22,6 +23,14 @@ const topics = [
 
 exports.handler = async () => {
     console.log("Journalist robot is waking up...");
+    
+    // بررسی وجود کلیدهای اصلی
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY || !process.env.GEMINI_API_KEY) {
+        console.error("CRITICAL ERROR: API keys are not set in Netlify environment.");
+        return { statusCode: 500, body: "Server configuration error." };
+    }
+
+    const db = getDb();
     const topicData = topics[Math.floor(Math.random() * topics.length)];
     const prompt = `به عنوان یک خبرنگار حرفه‌ای و بی‌طرف، یک مقاله خبری جذاب و دقیق در دو پاراگراف در مورد موضوع زیر بنویس. فقط متن مقاله را برگردان، بدون هیچ عنوان یا مقدمه‌ای. موضوع: "${topicData.topic}"`;
 
@@ -32,6 +41,11 @@ exports.handler = async () => {
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
         });
         
+        if (!geminiResponse.ok) {
+            const errorText = await geminiResponse.text();
+            throw new Error(`Gemini API failed with status ${geminiResponse.status}: ${errorText}`);
+        }
+
         const geminiData = await geminiResponse.json();
         const content = geminiData.candidates[0].content.parts[0].text;
 
@@ -49,7 +63,8 @@ exports.handler = async () => {
         return { statusCode: 200, body: "Article generated successfully." };
 
     } catch (error) {
-        console.error("Error generating article:", error);
-        return { statusCode: 500, body: "Error generating article." };
+        // لاگ کردن خطای کامل برای دیباگ
+        console.error("Detailed Error:", error);
+        return { statusCode: 500, body: `Error generating article: ${error.message}` };
     }
 };
