@@ -1,32 +1,8 @@
-/* دستورات لازم برای فعال سازی Tailwind CSS */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* تنظیمات فونت و جهت پیش فرض برای کل اپلیکیشن */
+/*
+  ما دیگر به دستورات @tailwind در اینجا نیازی نداریم،
+  چون آنها را از طریق تگ script در index.html لود می کنیم.
+  این فایل را می توان برای استایل های خاص و سفارشی نگه داشت.
+*/
 body {
-  font-family: 'Vazirmatn', sans-serif;
-  direction: rtl;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* استایل برای متن های طولانی که با Markdown رندر می شوند */
-.prose {
-  text-align: justify;
-}
-
-.prose h2 {
-  font-size: 1.5em;
-  margin-top: 1.2em;
-  margin-bottom: 0.5em;
-}
-
-.prose p {
-    line-height: 1.7;
-    margin-bottom: 1em;
-}
-
-.prose strong {
-    font-weight: 900;
+  /* این استایل ها توسط تنظیمات Tailwind در index.html اعمال می شوند */
 }
