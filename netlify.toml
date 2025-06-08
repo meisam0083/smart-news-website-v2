@@ -1,14 +1,13 @@
-# تنظیمات اصلی ساخت پروژه
 [build]
-  # دستوری که پروژه را می سازد
   command = "npm run build"
-  # پوشه ای که بعد از ساخت باید منتشر شود
   publish = "build"
-  # مسیری که توابع سمت سرور (مثل تابع Gemini) در آن قرار دارند
   functions = "netlify/functions"
 
-# تنظیمات برای اپلیکیشن های React (Single Page Application)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# این بخش ربات ما را هر ساعت اجرا می کند
+[functions.generate-news]
+  schedule = "0 * * * *"
