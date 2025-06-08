@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react'; // <<-- فقط این خط تغییر کرده است
 
 // داده های نمونه که از قبل توسط AI خلاصه شده اند
 const preSummarizedNews = [
