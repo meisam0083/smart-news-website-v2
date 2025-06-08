@@ -5,10 +5,13 @@ function App() {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchStoredNews = async () => {
+    const fetchNews = async () => {
       try {
-        const response = await fetch('/.netlify/functions/get-news');
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        // صدا زدن ربات همه‌کاره جدید
+        const response = await fetch('/.netlify/functions/get-iran-news');
+        if (!response.ok) {
+            throw new Error(`خطای سرور: ${response.status}`);
+        }
         const articles = await response.json();
         setNews(articles);
       } catch (error) {
@@ -17,7 +20,7 @@ function App() {
         setLoading(false);
       }
     };
-    fetchStoredNews();
+    fetchNews();
   }, []);
 
   const Header = () => (
@@ -47,8 +50,8 @@ function App() {
   };
   
   const NewsFeed = () => {
-    if (loading) return <div className="text-center p-10 text-lg">درحال بارگذاری سریع اخبار از بایگانی...</div>;
-    if (news.length === 0) return <div className="text-center p-10">بایگانی اخبار خالی است. ربات خبرنگار به زودی آن را پر خواهد کرد.</div>;
+    if (loading) return <div className="text-center p-10 text-lg">خبرنگار هوشمند در حال تحلیل رویدادها... (ممکن است کمی طول بکشد)</div>;
+    if (news.length === 0) return <div className="text-center p-10">مقاله‌ای برای نمایش یافت نشد. لطفاً لحظاتی بعد دوباره تلاش کنید.</div>;
     return (
       <div className="container mx-auto max-w-3xl px-6 py-8"><div className="space-y-6">
           {news.map((article, index) => <ArticleCard key={article.id} article={article} index={index} />)}
