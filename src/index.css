@@ -1,0 +1,28 @@
+/* دستورات لازم برای فعال سازی Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* تنظیمات فونت و جهت پیش فرض برای کل اپلیکیشن */
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* استایل برای متن های طولانی که با Markdown رندر می شوند */
+.prose {
+  text-align: justify;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+    line-height: 1.7;
+    margin-bottom: 1em;
+}
