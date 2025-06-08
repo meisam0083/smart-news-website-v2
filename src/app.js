@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { marked } from 'marked';
-import './index.css'; // استایل های عمومی رو وارد می کنیم
+import './index.css'; // فایل استایل را وارد می کنیم
 
-// تابع کمکی برای فرمت زیبای تاریخ
+// تابع کمکی برای فرمت زیبای تاریخ به فارسی
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString('fa-IR', {
@@ -11,7 +11,7 @@ const formatTimestamp = (timestamp) => {
   });
 };
 
-// داده های نمونه اخبار تا وقتی که به سرور واقعی وصل نشدیم
+// داده های نمونه اخبار
 const mockNews = [
   {
     id: '1',
@@ -46,7 +46,6 @@ function App() {
     setSummaryError('');
     try {
       const prompt = `متن خبری زیر را به زبان فارسی و در حداکثر 3 جمله کلیدی و مهم خلاصه کن. فقط متن خلاصه را برگردان:\n\n${content}`;
-      
       const apiUrl = '/.netlify/functions/gemini-proxy';
 
       const response = await fetch(apiUrl, {
@@ -66,7 +65,6 @@ function App() {
       } else {
         throw new Error('پاسخ معتبری از هوش مصنوعی دریافت نشد.');
       }
-
     } catch (error) {
       setSummaryError(error.message);
     } finally {
@@ -74,60 +72,63 @@ function App() {
     }
   };
 
+  // کامپوننت هدر
   const Header = () => (
-    <header className="bg-green-700 text-white p-4 shadow-lg">
+    <header className="bg-green-700 text-white p-4 shadow-lg sticky top-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">اخبار هوشمند</h1>
-        <nav><a href="#" className="hover:text-green-200">درباره ما</a></nav>
+        <nav><a href="#about" className="hover:text-green-200">درباره ما</a></nav>
       </div>
     </header>
   );
 
+  // کامپوننت کارت خبر
   const ArticleCard = ({ article }) => (
     <div 
-      className="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform hover:scale-105 duration-300 cursor-pointer"
+      className="bg-white rounded-lg shadow-md overflow-hidden transform transition-transform hover:scale-105 duration-300 cursor-pointer flex flex-col"
       onClick={() => setSelectedArticle(article)}
     >
       <img src={article.imageUrl} alt={article.title} className="w-full h-48 object-cover" />
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-grow">
         <span className="text-sm font-semibold text-green-600">{article.category}</span>
-        <h3 className="font-bold text-xl my-2 text-gray-800">{article.title}</h3>
+        <h3 className="font-bold text-xl my-2 text-gray-800 flex-grow">{article.title}</h3>
         <p className="text-gray-600 text-sm">{article.summary}</p>
       </div>
     </div>
   );
 
+  // کامپوننت فید اخبار
   const NewsFeed = ({ news }) => (
     <div className="p-4 md:p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {news.map(article => <ArticleCard key={article.id} article={article} />)}
       </div>
     </div>
   );
 
+  // کامپوننت مودال جزئیات خبر
   const ArticleDetailModal = ({ article, onClose }) => {
     if (!article) return null;
-
     const displayedContent = summarizedContent[article.id] || article.content;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+      <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50" onClick={onClose}>
+        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
           <div className="p-6 overflow-y-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">{article.title}</h2>
             <p className="text-sm text-gray-500 mb-4">{formatTimestamp(article.timestamp)}</p>
             <img src={article.imageUrl} alt={article.title} className="w-full h-64 object-cover rounded-md mb-4" />
-            <div className="prose max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: marked.parse(displayedContent) }} />
+            <div className="prose max-w-none text-gray-700" dangerouslySetInnerHTML={{ __html: marked(displayedContent.replace(/\n/g, '<br/>')) }} />
           </div>
-          <div className="flex justify-end gap-3 p-4 bg-gray-50 border-t border-gray-200">
-            {loadingSummary && <p className="text-gray-600">در حال خلاصه‌سازی...</p>}
+          <div className="flex justify-end items-center gap-3 p-4 bg-gray-50 border-t border-gray-200">
+            {loadingSummary && <p className="text-gray-600 animate-pulse">در حال خلاصه‌سازی...</p>}
             {summaryError && <p className="text-red-500 text-sm">{summaryError}</p>}
             {!loadingSummary && !summaryError && !summarizedContent[article.id] && (
-              <button onClick={() => summarizeArticle(article.id, article.content)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+              <button onClick={() => summarizeArticle(article.id, article.content)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                 خلاصه‌سازی با AI
               </button>
             )}
-            <button onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">بستن</button>
+            <button onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors">بستن</button>
           </div>
         </div>
       </div>
