@@ -1,32 +1,34 @@
-import React from 'react';
-
-// داده های نمونه که از قبل توسط AI خلاصه شده اند
-const preSummarizedNews = [
-  {
-    id: '1',
-    title: 'تحولات جهانی در حوزه انرژی‌های پاک',
-    summary: 'گذار به انرژی‌های تجدیدپذیر با سرعت بیشتری در حال انجام است و نوآوری‌ها در زمینه پنل‌های خورشیدی و توربین‌های بادی، آینده انرژی جهان را شکل می‌دهند.',
-    timestamp: new Date().setHours(10, 30, 0, 0),
-    category: 'انرژی پاک'
-  },
-  {
-    id: '2',
-    title: 'آینده هوش مصنوعی: فراتر از تصور',
-    summary: 'مدل‌های جدید هوش مصنوعی با قابلیت‌های استدلال و خلاقیت پیشرفته، در حال ایجاد تحول در صنایع خلاق، پزشکی و علوم پایه هستند.',
-    timestamp: new Date().setHours(11, 0, 0, 0),
-    category: 'فناوری'
-  },
-  {
-    id: '3',
-    title: 'اقتصاد دیجیتال و چالش‌های پیش رو',
-    summary: 'رشد سریع اقتصاد دیجیتال، فرصت‌های بی‌نظیری ایجاد کرده است، اما چالش‌هایی مانند امنیت سایبری و حفظ حریم خصوصی نیازمند راه‌حل‌های نوآورانه هستند.',
-    timestamp: new Date().setHours(9, 45, 0, 0),
-    category: 'اقتصاد'
-  },
-];
+import React, { useState, useEffect } from 'react';
 
 // کامپوننت اصلی اپلیکیشن
 function App() {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // این `useEffect` فقط یک بار موقع بالا آمدن سایت اجرا می شود
+  useEffect(() => {
+    // تابع برای گرفتن اخبار واقعی
+    const fetchRealNews = async () => {
+      try {
+        const response = await fetch('/.netlify/functions/fetch-news');
+        if (!response.ok) {
+          throw new Error('خطا در دریافت اطلاعات از سرور');
+        }
+        const articles = await response.json();
+        setNews(articles);
+        setError(null);
+      } catch (err) {
+        setError('متاسفانه در حال حاضر امکان دریافت اخبار وجود ندارد.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRealNews();
+  }, []); // آرایه خالی به این معنی است که فقط یک بار اجرا شود
+
 
   // کامپوننت هدر
   const Header = () => (
@@ -39,54 +41,38 @@ function App() {
   );
 
   // کامپوننت کارت خبر
-  const ArticleCard = ({ article, index }) => {
-    
-    // تابع کمکی برای تبدیل اعداد انگلیسی به فارسی
-    const toPersianDigits = (num) => {
-        const persian = { 0: '۰', 1: '۱', 2: '۲', 3: '۳', 4: '۴', 5: '۵', 6: '۶', 7: '۷', 8: '۸', 9: '۹' };
-        return num.toString().replace(/[0-9]/g, (w) => persian[w]);
-    };
+  const ArticleCard = ({ article, index }) => (
+    <a href={article.url} target="_blank" rel="noopener noreferrer"
+      className="bg-white block rounded-2xl shadow-sm border border-gray-200/80 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-500 animate-fade-in-up"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+        <div className="flex justify-between items-center mb-4">
+             <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{article.source.name}</span>
+             <span className="text-xs text-gray-400 font-medium">{new Date(article.publishedAt).toLocaleDateString('fa-IR')}</span>
+        </div>
+        <h3 className="text-base font-bold text-gray-800 leading-tight">{article.title}</h3>
+        <p className="text-sm text-gray-600 mt-2 leading-relaxed">{article.description}</p>
+    </a>
+  );
 
-    // تابع کمکی برای نمایش تاریخ به صورت "۳ ساعت پیش" و غیره
-    const timeAgo = (timestamp) => {
-        const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " سال پیش";
-        interval = seconds / 2592000;
-        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " ماه پیش";
-        interval = seconds / 86400;
-        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " روز پیش";
-        interval = seconds / 3600;
-        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " ساعت پیش";
-        interval = seconds / 60;
-        if (interval > 1) return toPersianDigits(Math.floor(interval)) + " دقیقه پیش";
-        return "لحظاتی پیش";
+  // کامپوننت فید اخبار
+  const NewsFeed = () => {
+    if (loading) {
+      return <div className="text-center p-10">درحال بارگذاری اخبار...</div>;
+    }
+
+    if (error) {
+      return <div className="text-center p-10 text-red-500">{error}</div>;
     }
 
     return (
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-200/80 p-6 transition-all duration-300 hover:shadow-lg hover:border-blue-500 animate-fade-in-up"
-          style={{ animationDelay: `${index * 100}ms` }}
-        >
-            <div className="flex justify-between items-center mb-4">
-                 <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{article.category}</span>
-                 <span className="text-xs text-gray-400 font-medium">{timeAgo(article.timestamp)}</span>
-            </div>
-            {/* در اینجا اندازه فونت تیتر اصلاح شده است */}
-            <h3 className="text-base font-bold text-gray-800 leading-tight">{article.title}</h3>
-            <p className="text-sm text-gray-600 mt-2 leading-relaxed">{article.summary}</p>
+      <div className="container mx-auto max-w-3xl px-6 py-8">
+        <div className="space-y-6">
+          {news.map((article, index) => <ArticleCard key={article.url + index} article={article} index={index} />)}
         </div>
+      </div>
     );
   };
-
-  // کامپوننت فید اخبار
-  const NewsFeed = () => (
-    <div className="container mx-auto max-w-3xl px-6 py-8">
-      <div className="space-y-6">
-        {preSummarizedNews.map((article, index) => <ArticleCard key={article.id} article={article} index={index} />)}
-      </div>
-    </div>
-  );
 
 
   return (
