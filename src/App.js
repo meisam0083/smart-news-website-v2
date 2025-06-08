@@ -72,7 +72,8 @@ function App() {
                  <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">{article.category}</span>
                  <span className="text-xs text-gray-400 font-medium">{timeAgo(article.timestamp)}</span>
             </div>
-            <h3 className="text-lg font-bold text-gray-800 leading-tight">{article.title}</h3>
+            {/* در اینجا اندازه فونت تیتر اصلاح شده است */}
+            <h3 className="text-base font-bold text-gray-800 leading-tight">{article.title}</h3>
             <p className="text-sm text-gray-600 mt-2 leading-relaxed">{article.summary}</p>
         </div>
     );
