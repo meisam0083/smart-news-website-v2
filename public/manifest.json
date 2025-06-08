@@ -1,23 +1,23 @@
 {
   "short_name": "اخبار هوشمند",
-  "name": "وب اپلیکیشن اخبار هوشمند",
+  "name": "اخبار هوشمند ایران",
   "icons": [
     {
-      "src": "https://placehold.co/192x192/166534/FFFFFF?text=SN",
+      "src": "https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f4f0/u1f4f0_u1f5de.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "https://placehold.co/512x512/166534/FFFFFF?text=SmartNews",
+      "src": "https://www.gstatic.com/android/keyboard/emojikitchen/20201001/u1f4f0/u1f4f0_u1f5de.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#16a34a",
-  "background_color": "#ffffff",
+  "theme_color": "#2563EB",
+  "background_color": "#f9fafb",
   "scope": "/",
-  "description": "یک اپلیکیشن خبری مدرن با قابلیت‌های هوشمند."
+  "description": "تحلیل هوشمند مهم‌ترین رویدادهای روز ایران"
 }
